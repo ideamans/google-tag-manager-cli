@@ -1,0 +1,22 @@
+{
+  "name": "google-tag-manager-cli",
+  "description": "Adds /gtmc-usage, /gtmc-log-audit and /gtmc-install skills for Google Tag Manager — inspect, audit and export containers, edit tags, triggers and variables in a workspace, create and publish versions from the command line, and prove from the local audit log which accounts and containers were touched.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Ideamans Inc.",
+    "email": "support@ideamans.com"
+  },
+  "homepage": "https://github.com/ideamans/google-tag-manager-cli",
+  "repository": "https://github.com/ideamans/google-tag-manager-cli",
+  "license": "MIT",
+  "keywords": [
+    "gtm",
+    "gtmc",
+    "google-tag-manager",
+    "tag-manager",
+    "cli",
+    "llm",
+    "agent",
+    "audit-log"
+  ]
+}

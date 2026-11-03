@@ -1,0 +1,52 @@
+name: test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Verify go.mod is tidy
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build
+        run: go build ./...
+
+      # 埋め込みリファレンスは go:embed の都合でコミットしている。
+      # ズレ防止はここで再生成して差分を検査すること。
+      - name: Regenerate the embedded LLM reference
+        run: go generate ./...
+
+      - name: Fail if the committed reference is stale
+        run: |
+          if ! git diff --exit-code -- internal/llmdocs; then
+            echo "::error::internal/llmdocs is out of date. Run 'go generate ./...' and commit the result."
+            exit 1
+          fi
+
+      - name: Test
+        run: go test -race ./...
+
+      - name: Verify the llm subcommand renders
+        run: |
+          go run . llm | head -5
+          go run . llm --format json | head -5

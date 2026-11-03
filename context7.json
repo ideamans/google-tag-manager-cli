@@ -1,0 +1,18 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "gtmc — Google Tag Manager CLI",
+  "description": "A non-interactive CLI for the Google Tag Manager API v2 (google-tag-manager-cli, command `gtmc`): look up containers by GTM-XXXX, audit and export them, edit tags, triggers, variables, folders, templates, clients and other entities in a workspace (also in bulk and from the Community Template Gallery), compile-check with quick-preview, create, stage and publish versions, and prove from a local audit log which accounts and containers were touched. Built for scripts and AI agents, with the complete reference embedded in the binary behind `gtmc llm`.",
+  "folders": ["internal/llmdocs"],
+  "excludeFolders": ["plugins", ".github", "cmd", ".claude"],
+  "rules": [
+    "Every edit happens in a workspace and is invisible to the site until a version is created from it (`gtmc version create`) and that version is published (`gtmc version publish <id> --yes`). Publishing changes the live site; get the user's approval first.",
+    "`gtmc version create` consumes the workspace — GTM deletes it. A new workspace is created only when it was the container's last one; otherwise run `gtmc workspace create --use` before editing again.",
+    "`--container` accepts a GTM-XXXX public ID without an account ID. Without `--workspace` the CLI uses the container's workspace only when exactly one exists; it never guesses between several.",
+    "`update --file` replaces the whole entity: start from the JSON of `get`. `create --file` drops IDs, paths and fingerprints but does not rewrite references (trigger IDs, folder IDs, {{variable}} names, cvt_ template types); use `workspace bulk-update` with new_N placeholder IDs to copy entities with their references.",
+    "A stale fingerprint fails with `400 The provided entity fingerprint is not valid.` (not 409): get the entity again and redo the edit.",
+    "Run `gtmc workspace quick-preview` before `version create`. The API's compiler errors carry no reason; the CLI adds `diagnostics` naming broken {{variable}} references.",
+    "Deletes, `version publish`, `version delete`, `environment delete`, `environment reauthorize` and `workspace bulk-update` with deletions require `--yes`. POST requests that fail with 5xx are not retried automatically; check with `list` or `version list` whether they took effect before retrying.",
+    "Every API request is written to a local JSON Lines audit log (`gtmc log dir`). `gtmc log summary --since <t> --allow-account <ids>` (or `--allow-container`) exits 1 and lists violations if anything outside the allowed scope was touched.",
+    "Output is JSON by default; `--format table` is for people. The complete, version-matched reference is `gtmc llm` (Markdown) or `gtmc llm --format json`; prefer it over any remembered command list."
+  ]
+}
